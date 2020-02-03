@@ -46,6 +46,15 @@ var EYES_COLORS = [
   'green',
 ];
 
+// Цвета огненных шаров
+var FIREBALL_COLORS = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848'
+];
+
 
 /**
  * Возвращает случайное целое число от 0 (включительно) до верхней границы (не включительно),
@@ -120,13 +129,107 @@ function createDataFragment(wizardArray) {
   return fragment;
 }
 
+// Находим необходимые элементы DOM
+
+// "Кнопка" открытия окна настроек
+var setupOpen = document.querySelector('.setup-open');
+// Аватар игрока
+var setupOpenIcon = setupOpen.querySelector('.setup-open-icon');
+
+// Окно настроек
+var setup = document.querySelector('.setup');
+// Иконка (кнопка) закрытия окна настроек
+var setupClose = setup.querySelector('.setup-close');
+// Поле ввода имени мага
+var setupUserName = setup.querySelector('.setup-user-name');
+
+// Блок настройки внешнего вида мага
+var setupPlayer = setup.querySelector('.setup-player');
+var setupWizard = setupPlayer.querySelector('.setup-wizard');
+var setupWizardCoat = setupWizard.querySelector('.wizard-coat');
+var setupWizardEyes = setupWizard.querySelector('.wizard-eyes');
+var setupFireball = setupPlayer.querySelector('.setup-fireball-wrap');
+
+// Индексы соответствующих массивов
+// Используются для переключения цветов в цикле
+// COAT_COLORS
+var coatColorIdx = 0;
+// EYES_COLORS
+var eyesColorIdx = 0;
+// FIREBALL_COLORS
+var fireballColorIdx = 0;
+
+// Определяем обработчики событий
+
+// Открытие окна настроек по клику на аватар игрока
+setupOpen.addEventListener('click', function () {
+  setup.classList.remove('hidden');
+});
+
+// Открытие окна настроек по нажатию клавиши Enter, если аватар игрока в фокусе
+setupOpenIcon.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    setup.classList.remove('hidden');
+  }
+});
+
+// Не закрывать окно настроек, если фокус находится в поле ввода имени мага
+setupUserName.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Escape') {
+    evt.stopPropagation();
+  }
+});
+
+// Закрываем окно настроек по нажатию на клавишу Escape, в случае, если окно открыто
+document.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Escape' && !setup.classList.contains('hidden')) {
+    setup.classList.add('hidden');
+  }
+});
+
+// Закрываем окно настроек по клику на кнопке закрытия окна
+setupClose.addEventListener('click', function () {
+  setup.classList.add('hidden');
+});
+
+// Закрываем окно настроек по нажатию Enter, если фокус находится на кнопке закрытия окна
+setupClose.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    setup.classList.add('hidden');
+  }
+});
+
+// Клик по мантии мага меняет ее цвет
+setupWizardCoat.addEventListener('click', function () {
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = COAT_COLORS[++coatColorIdx % COAT_COLORS.length];
+  setupWizardCoat.style.fill = value;
+  // Меняем значение соответствующего скрытого тега input
+  setupPlayer.querySelector('.coat-color').value = value;
+});
+
+// Клик по глазу мага меняет цвет глаз
+setupWizardEyes.addEventListener('click', function () {
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = EYES_COLORS[++eyesColorIdx % EYES_COLORS.length];
+  setupWizardEyes.style.fill = value;
+  // Меняем значение соответствующего скрытого тега input
+  setupPlayer.querySelector('.eyes-color').value = value;
+});
+
+// Клик по файерболу меняет его цвет
+setupFireball.addEventListener('click', function () {
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = FIREBALL_COLORS[++fireballColorIdx % FIREBALL_COLORS.length];
+  setupFireball.style.backgroundColor = value;
+  // Меняем значение соответствующего скрытого тега input
+  setupPlayer.querySelector('.fireball-color').value = value;
+});
+
 // Создаем массив данных магов
 var wizards = createWizards();
 
-// Отображаем настройки игры
-var userDialog = document.querySelector('.setup');
-userDialog.classList.remove('hidden');
 // Создаем фрагмент с магами и добавляем его в список похожих персонажей
-userDialog.querySelector('.setup-similar-list').appendChild(createDataFragment(wizards));
+setup.querySelector('.setup-similar-list').appendChild(createDataFragment(wizards));
 // Отображаем список похожих персонажей
-userDialog.querySelector('.setup-similar').classList.remove('hidden');
+setup.querySelector('.setup-similar').classList.remove('hidden');
