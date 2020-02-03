@@ -84,40 +84,6 @@ function getName() {
 }
 
 /**
- * Конвертация числа из десятичной системы счисления в шестнадцатиричную
- * @param {String} num - строка содержащая число в пределах [0, 255]
- * @return {String} строка содержащая число в пределах [0, ff]
- */
-function convertNumToHEX(num) {
-  return ('0' + parseInt(num, 10).toString(16)).slice(-2);
-}
-
-/**
- * Конвертация цвета из RGB в HEX
- * Если строка не распознается как RGB, возвращается пустая строка
- * (с) взято  из свободных источников
- * @param {String} rgb - строка содержащая цвет в формате RGB
- * @return {String} строка содержащая число в формате HEX
- */
-function convertRGBtoHEX(rgb) {
-  rgb = rgb.match(/^rgb?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-  return (rgb && rgb.length === 4) ?
-    '#' + convertNumToHEX(rgb[1]) + convertNumToHEX(rgb[2]) + convertNumToHEX(rgb[3]) : '';
-}
-
-/**
- * Определяется элемент массива следующий за входящим элементом.
- * Если такого элемента нет, то возвращается нулевой элемент массива.
- * @param {Object} currentValue - некоторое значение (элемент массива)
- * @param {Array} arr - массив, из которого нужно взять следующий элемент
- * @return {Object} следующий элемент массива
- */
-function getNextValue(currentValue, arr) {
-  var idx = arr.indexOf(currentValue ? currentValue : arr[0]);
-  return (idx === -1 || idx === arr.length - 1) ? arr[0] : arr[idx + 1];
-}
-
-/**
  * Создание списка объектов данных магов
  * @return {Array} список данных
  */
@@ -184,6 +150,15 @@ var setupWizardCoat = setupWizard.querySelector('.wizard-coat');
 var setupWizardEyes = setupWizard.querySelector('.wizard-eyes');
 var setupFireball = setupPlayer.querySelector('.setup-fireball-wrap');
 
+// Индексы соответствующих массивов
+// Используются для переключения цветов в цикле
+// COAT_COLORS
+var coatColorIdx = 0;
+// EYES_COLORS
+var eyesColorIdx = 0;
+// FIREBALL_COLORS
+var fireballColorIdx = 0;
+
 // Определяем обработчики событий
 
 // Открытие окна настроек по клику на аватар игрока
@@ -224,28 +199,28 @@ setupClose.addEventListener('keydown', function (evt) {
   }
 });
 
-// Клик по мантии мага меняет ее цвет. Цвет меняется циклически
+// Клик по мантии мага меняет ее цвет
 setupWizardCoat.addEventListener('click', function () {
-  var value = getNextValue(setupWizardCoat.style.fill, COAT_COLORS);
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = COAT_COLORS[++coatColorIdx % COAT_COLORS.length];
   setupWizardCoat.style.fill = value;
   // Меняем значение соответствующего скрытого тега input
   setupPlayer.querySelector('.coat-color').value = value;
 });
 
-// Клик по глазу мага меняет цвет глаз. Цвет меняется циклически
+// Клик по глазу мага меняет цвет глаз
 setupWizardEyes.addEventListener('click', function () {
-  var value = getNextValue(setupWizardEyes.style.fill, EYES_COLORS);
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = EYES_COLORS[++eyesColorIdx % EYES_COLORS.length];
   setupWizardEyes.style.fill = value;
   // Меняем значение соответствующего скрытого тега input
   setupPlayer.querySelector('.eyes-color').value = value;
 });
 
-// Клик по файерболу меняет его цвет. Цвет меняется циклически
+// Клик по файерболу меняет его цвет
 setupFireball.addEventListener('click', function () {
-  // Настройки цвета даны в HEX, а браузер возвращает значение background-color в RGB
-  // Производим конвертацию
-  var value = convertRGBtoHEX(setupFireball.style.backgroundColor);
-  value = getNextValue(value, FIREBALL_COLORS);
+  // Получаем следующий элемент массива. Если текущий элемент последний, то возвращается нулевой
+  var value = FIREBALL_COLORS[++fireballColorIdx % FIREBALL_COLORS.length];
   setupFireball.style.backgroundColor = value;
   // Меняем значение соответствующего скрытого тега input
   setupPlayer.querySelector('.fireball-color').value = value;
