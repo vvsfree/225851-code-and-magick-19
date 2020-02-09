@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  // Импорт функций и констант из других модулей
+  var save = window.backend.save;
+  var errorHandler = window.util.errorHandler;
+
   // "Кнопка" открытия окна настроек
   var setupOpen = document.querySelector('.setup-open');
   // Аватар игрока
@@ -12,6 +16,12 @@
   var setupClose = setup.querySelector('.setup-close');
   // Поле ввода имени мага
   var setupUserName = setup.querySelector('.setup-user-name');
+
+  // Элемент, за который будем диалог тащить (далее просто элемент)
+  var dialogHandle = setup.querySelector('.upload');
+
+  // Форма сохранения настроек
+  var form = setup.querySelector('.setup-wizard-form');
 
   /**
    * Открываем диалог
@@ -42,6 +52,22 @@
     window.util.isEscEvent(evt, closeDialog);
   }
 
+  /**
+   * Обработчик события успешной отправки данных
+   */
+  function successHandler() {
+    setup.classList.add('hidden');
+  }
+
+  /**
+   * Обработчик события submit на форме
+   * @param {Event} evt - событие
+   */
+  function formSubmitHandler(evt) {
+    save(new FormData(form), successHandler, errorHandler);
+    evt.preventDefault();
+  }
+
   // Открытие окна настроек по клику на аватар игрока
   setupOpen.addEventListener('click', function () {
     openDialog();
@@ -69,8 +95,6 @@
     window.util.isEnterEvent(evt, closeDialog);
   });
 
-  // Элемент, за который будем диалог тащить (далее просто элемент)
-  var dialogHandle = setup.querySelector('.upload');
   // Добавляем обработчик события mousedown
   dialogHandle.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -127,5 +151,8 @@
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   });
+
+  // Сохраняем настройки мага
+  form.addEventListener('submit', formSubmitHandler);
 
 })();
