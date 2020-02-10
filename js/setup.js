@@ -1,104 +1,13 @@
 'use strict';
 
 (function () {
-  // Количество похожих персонажей
-  var WIZARDS_COUNT = 4;
-
-  // Набор первых имен
-  var FIRST_NAMES = [
-    'Иван',
-    'Хуан Себастьян',
-    'Мария',
-    'Кристоф',
-    'Виктор',
-    'Юлия',
-    'Люпита',
-    'Вашингтон',
-  ];
-
-  // Набор вторых имен
-  var LAST_NAMES = [
-    'да Марья',
-    'Верон',
-    'Мирабелла',
-    'Вальц',
-    'Онопко',
-    'Топольницкая',
-    'Нионго',
-    'Ирвинг',
-  ];
-
-  // Цвета одежды
-  var COAT_COLORS = [
-    'rgb(101, 137, 164)',
-    'rgb(241, 43, 107)',
-    'rgb(146, 100, 161)',
-    'rgb(56, 159, 117)',
-    'rgb(215, 210, 55)',
-    'rgb(0, 0, 0)',
-  ];
-
-  // Цвета глаз
-  var EYES_COLORS = [
-    'black',
-    'red',
-    'blue',
-    'yellow',
-    'green',
-  ];
-
-  // Цвета огненных шаров
-  var FIREBALL_COLORS = [
-    '#ee4830',
-    '#30a8ee',
-    '#5ce6c0',
-    '#e848d5',
-    '#e6e848'
-  ];
-
-
-  /**
-   * Возвращает случайное целое число от 0 (включительно) до верхней границы (не включительно),
-   * т.е промежуток [0, upperLimit)
-   * @param {Number} upperLimit - верхняя граница
-   * @return {Number} случайное целое число
-   */
-  function getRandomInt(upperLimit) {
-    return Math.floor(Math.random() * upperLimit);
-  }
-
-  /**
-   * Возвращает случайный элемент массива
-   * @param {Array} arr - массив
-   * @return {Object} элемент массива
-   */
-  function getRandomValue(arr) {
-    return arr[getRandomInt(arr.length)];
-  }
-
-  /**
-   * Формирование полного имени из случайных первого и второго имени
-   * @return {String} полное имя
-   */
-  function getName() {
-    return getRandomValue(FIRST_NAMES) + ' ' + getRandomValue(LAST_NAMES);
-  }
-
-  /**
-   * Создание списка объектов данных магов
-   * @return {Array} список данных
-   */
-  function createWizards() {
-    var wizardArray = [];
-    for (var i = 0; i < WIZARDS_COUNT; i++) {
-      wizardArray.push({
-        name: getName(),
-        coatColor: getRandomValue(COAT_COLORS),
-        eyesColor: getRandomValue(EYES_COLORS)
-      });
-    }
-    return wizardArray;
-  }
+  // Импорт функций и констант из других модулей
+  var WIZARDS_COUNT = window.constants.WIZARDS_COUNT;
+  var COAT_COLORS = window.constants.COAT_COLORS;
+  var EYES_COLORS = window.constants.EYES_COLORS;
+  var FIREBALL_COLORS = window.constants.FIREBALL_COLORS;
+  var load = window.backend.load;
+  var errorHandler = window.util.errorHandler;
 
   /**
    * Создание объекта мага на основе переданного шаблона и данных
@@ -109,8 +18,8 @@
   function createWizard(wizard, template) {
     var wizardElement = template.cloneNode(true);
     wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-    wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+    wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
     return wizardElement;
   }
 
@@ -121,13 +30,24 @@
    * @param {Array} wizardArray - массив данных магов
    * @return {DocumentFragment} фрагмент документа
    */
-  function createDataFragment(wizardArray) {
+  function createWizards(wizardArray) {
     var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < wizardArray.length; i++) {
+    for (var i = 0; i < WIZARDS_COUNT; i++) {
       fragment.appendChild(createWizard(wizardArray[i], similarWizardTemplate));
     }
     return fragment;
+  }
+
+  /**
+   * Обработчик события успешной загрузки данных с сервера
+   * @param {Array} wizards - массив объктов данных магов
+  */
+  function successHandler(wizards) {
+    // Создаем фрагмент с магами и добавляем его в список похожих персонажей
+    setup.querySelector('.setup-similar-list').appendChild(createWizards(wizards));
+    // Отображаем список похожих персонажей
+    setup.querySelector('.setup-similar').classList.remove('hidden');
   }
 
   // Находим необходимые элементы DOM
@@ -180,11 +100,6 @@
     setupPlayer.querySelector('.fireball-color').value = value;
   });
 
-  // Создаем массив данных магов
-  var wizards = createWizards();
-
-  // Создаем фрагмент с магами и добавляем его в список похожих персонажей
-  setup.querySelector('.setup-similar-list').appendChild(createDataFragment(wizards));
-  // Отображаем список похожих персонажей
-  setup.querySelector('.setup-similar').classList.remove('hidden');
+  // Получаем массив данных магов
+  load(successHandler, errorHandler);
 })();
