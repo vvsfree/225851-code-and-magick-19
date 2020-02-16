@@ -56,7 +56,7 @@
    * Обработчик события успешной отправки данных
    */
   function successHandler() {
-    setup.classList.add('hidden');
+    closeDialog();
   }
 
   /**
