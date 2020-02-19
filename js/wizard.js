@@ -1,10 +1,33 @@
 'use strict';
 
 (function () {
-  // Импорт функций и констант из других модулей
-  var COAT_COLORS = window.constants.COAT_COLORS;
-  var EYES_COLORS = window.constants.EYES_COLORS;
-  var FIREBALL_COLORS = window.constants.FIREBALL_COLORS;
+  // Цвета одежды
+  var COAT_COLORS = [
+    'rgb(101, 137, 164)',
+    'rgb(241, 43, 107)',
+    'rgb(146, 100, 161)',
+    'rgb(56, 159, 117)',
+    'rgb(215, 210, 55)',
+    'rgb(0, 0, 0)',
+  ];
+
+  // Цвета глаз
+  var EYES_COLORS = [
+    'black',
+    'red',
+    'blue',
+    'yellow',
+    'green',
+  ];
+
+  // Цвета огненных шаров
+  var FIREBALL_COLORS = [
+    '#ee4830',
+    '#30a8ee',
+    '#5ce6c0',
+    '#e848d5',
+    '#e6e848'
+  ];
 
   // Необходимые элементы DOM
 

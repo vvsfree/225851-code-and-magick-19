@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  // Импорт функций и констант из других модулей
+  // Импорт функций из других модулей
   var save = window.backend.save;
   var errorHandler = window.util.errorHandler;
 

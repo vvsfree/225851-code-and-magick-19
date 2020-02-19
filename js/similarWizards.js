@@ -1,8 +1,8 @@
 'use strict';
 
 (function () {
-  // Импорт функций и констант из других модулей
-  var WIZARDS_COUNT = window.constants.WIZARDS_COUNT;
+  // Количество похожих персонажей
+  var WIZARDS_COUNT = 4;
 
   /**
    * Создание объекта мага на основе переданного шаблона и данных
